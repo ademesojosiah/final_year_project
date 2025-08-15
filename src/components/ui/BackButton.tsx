@@ -22,7 +22,7 @@ export const BackButton: React.FC<BackButtonProps> = ({
   return (
     <button
       onClick={handleBack}
-      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors group"
+      className="flex items-center gap-2 text-orderTextColor hover:text-gray-900 transition-colors group"
     >
       <svg 
         className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" 

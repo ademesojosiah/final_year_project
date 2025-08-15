@@ -3,6 +3,7 @@ import Login from '../pages/auth/Login';
 import RoleSelection from '../pages/auth/RoleSelection';
 import VerifyEmail from '../pages/auth/VerifyEmail';
 import Orders from '../pages/Orders';
+import Scanner from '../pages/Scanner';
 import { OrderDetails } from '../pages/OrderDetails';
 
 export const routes: RouteObject[] = [
@@ -22,6 +23,10 @@ export const routes: RouteObject[] = [
   {
     path: '/orders',
     element: <Orders />,
+  },
+  {
+    path: '/scanner',
+    element: <Scanner />,
   },
   {
     path: '/orders/:orderId',

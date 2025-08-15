@@ -40,7 +40,7 @@ export const OrderContent: React.FC<OrderContentProps> = ({
 
       {/* Order Icon */}
       <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8">
-        <svg className="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none">
+        <svg className={`w-12 h-12 ${statusColorClass}`} viewBox="0 0 24 24" fill="none">
           <path
             d="M12 8V12L14 14M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3Z"
             stroke="currentColor"
