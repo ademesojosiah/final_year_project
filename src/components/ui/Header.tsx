@@ -7,8 +7,14 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ userName = "Jojo A" }) => {
   return (
     <header className="bg-primary text-white py-4 px-6 flex justify-between items-center">
-      {/* Company Name */}
-      <div className="text-xl font-bold">PTS COMPANY</div>
+      {/* Company Logo */}
+      <div className="flex items-center">
+        <img 
+          src="/logo.png" 
+          alt="Company Logo" 
+          className="h-8 w-auto"
+        />
+      </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">

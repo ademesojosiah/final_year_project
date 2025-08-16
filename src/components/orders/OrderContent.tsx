@@ -1,5 +1,6 @@
 import React from 'react';
 import { ProgressBar } from './ProgressBar';
+import statusColors from '../dashboard/statusColors';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -10,20 +11,13 @@ interface OrderContentProps {
 }
 
 const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case 'In Production':
-      return 'bg-indigo-50 text-indigo-600';
-    case 'In Printing':
-      return 'bg-pink-50 text-pink-600';
-    case 'In Binding':
-      return 'bg-rose-50 text-rose-600';
-    case 'Packaging':
-      return 'bg-amber-50 text-amber-600';
-    case 'Delivery':
-      return 'bg-green-50 text-green-600';
-    default:
-      return 'bg-gray-50 text-gray-600';
-  }
+  const color = statusColors[status as keyof typeof statusColors];
+  const bgColor = color + '20'; // Add transparency for background
+  
+  return {
+    color: color,
+    backgroundColor: bgColor,
+  };
 };
 
 export const OrderContent: React.FC<OrderContentProps> = ({
@@ -31,7 +25,8 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   estimatedDate,
   status,
 }) => {
-  const statusColorClass = getStatusColor(status);
+  const statusStyle = getStatusColor(status);
+  const iconColor = statusColors[status as keyof typeof statusColors];
 
   return (
     <div className="flex flex-col items-center text-center mb-12">
@@ -39,8 +34,16 @@ export const OrderContent: React.FC<OrderContentProps> = ({
       <h1 className="text-2xl font-semibold mb-8">ORD-{orderId}</h1>
 
       {/* Order Icon */}
-      <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8">
-        <svg className={`w-12 h-12 ${statusColorClass}`} viewBox="0 0 24 24" fill="none">
+      <div 
+        className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
+        style={{ backgroundColor: iconColor + '20' }}
+      >
+        <svg 
+          className="w-12 h-12" 
+          viewBox="0 0 24 24" 
+          fill="none"
+          style={{ color: iconColor }}
+        >
           <path
             d="M12 8V12L14 14M12 3C7.03 3 3 7.03 3 12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12C21 7.03 16.97 3 12 3Z"
             stroke="currentColor"
@@ -61,7 +64,10 @@ export const OrderContent: React.FC<OrderContentProps> = ({
         <h3 className="text-lg font-medium mb-2">
           Estimated completion date: {estimatedDate}
         </h3>
-        <span className={`px-4 py-2 rounded-full text-sm font-medium ${statusColorClass}`}>
+        <span 
+          className="px-4 py-2 rounded-full text-sm font-medium"
+          style={statusStyle}
+        >
           {status}
         </span>
       </div>

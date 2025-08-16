@@ -1,4 +1,5 @@
 import React from 'react';
+import statusColors from '../dashboard/statusColors';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -10,31 +11,31 @@ const stages = [
   { 
     label: 'Production', 
     shortLabel: 'Prod',
-    color: '#6366F1',
+    color: statusColors['In Production'],
     icon: '⚡'
   },
   { 
     label: 'In Print', 
     shortLabel: 'Print',
-    color: '#8B5CF6',
+    color: statusColors['In Printing'],
     icon: '🖨️'
   },
   { 
     label: 'Binding', 
     shortLabel: 'Bind',
-    color: '#EC4899',
+    color: statusColors['In Binding'],
     icon: '📚'
   },
   { 
     label: 'Packaging', 
     shortLabel: 'Pack',
-    color: '#F59E0B',
+    color: statusColors['Packaging'],
     icon: '📦'
   },
   { 
     label: 'Delivery', 
     shortLabel: 'Ready',
-    color: '#10B981',
+    color: statusColors['Delivery'],
     icon: '🚚'
   }
 ];

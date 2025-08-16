@@ -4,6 +4,7 @@ import RoleSelection from '../pages/auth/RoleSelection';
 import VerifyEmail from '../pages/auth/VerifyEmail';
 import Orders from '../pages/Orders';
 import Scanner from '../pages/Scanner';
+import ManagerDashboard from '../pages/ManagerDashboard';
 import { OrderDetails } from '../pages/OrderDetails';
 
 export const routes: RouteObject[] = [
@@ -21,6 +22,10 @@ export const routes: RouteObject[] = [
     element: <VerifyEmail />,
   },
   {
+    path: '/dashboard',
+    element: <ManagerDashboard />,
+  },
+  {
     path: '/orders',
     element: <Orders />,
   },
@@ -34,7 +39,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/',
-    element: <RoleSelection />,
+    element: <ManagerDashboard />,
   }
   // Add more routes here as needed
 ];

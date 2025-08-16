@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import statusColors from '../dashboard/statusColors';
 
 interface OrderRowProps {
   batchId: string;
@@ -10,23 +11,19 @@ interface OrderRowProps {
 
 export const OrderRow = ({ batchId, orderId, quantity, deliverySchedule, status }: OrderRowProps) => {
   const navigate = useNavigate();
-  // Function to get status color
+  
+  // Function to get status color using standardized colors
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'In Production':
-        return 'text-indigo-600 font-bold bg-indigo-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-      case 'In Printing':
-        return 'text-pink-600 font-bold bg-pink-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-      case 'In Binding':
-        return 'text-rose-600 font-bold bg-rose-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-      case 'Packaging':
-        return 'text-amber-600 font-bold bg-amber-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-      case 'Delivery':
-        return 'text-green-600 font-bold bg-green-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-      default:
-        return 'text-gray-600 font-bold bg-gray-50 px-4 py-5 rounded-2xl text-sm  w-[160px] text-center';
-    }
+    const color = statusColors[status as keyof typeof statusColors];
+    const bgColor = color + '20'; // Add transparency for background
+    
+    return {
+      color: color,
+      backgroundColor: bgColor,
+    };
   };
+
+  const statusStyle = getStatusColor(status);
 
   return (
     <div className="grid grid-cols-6 gap-4 items-center py-4 border-b border-gray-100 mx-3">
@@ -35,7 +32,12 @@ export const OrderRow = ({ batchId, orderId, quantity, deliverySchedule, status 
       <div className="text-orderTextColor font-semibold">{quantity}</div>
       <div className="text-orderTextColor font-semibold">{deliverySchedule}</div>
       <div className="flex justify-start">
-        <p className={getStatusColor(status)}>{status}</p>
+        <p 
+          className="font-bold px-4 py-5 rounded-2xl text-sm w-[160px] text-center"
+          style={statusStyle}
+        >
+          {status}
+        </p>
       </div>
       <div>
         <button 
