@@ -32,11 +32,11 @@ const OrdersComp = () => {
           <div className="min-w-[800px]"> {/* Minimum width to maintain table structure */}
             {/* Column Headers */}
             <div className="grid grid-cols-6 bg-[#FFF2E0] border-b px-3 m-1.5 border-gray-200">
-              <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Barcode no</div>
+              <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Product name</div>
               <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Order ID</div>
               <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Quantity</div>
               <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Delivery Deadline</div>
-              <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Status</div>
+              <div className="px-4 py-4 text-center font-semibold text-orderTextColor">Status</div>
               <div className="px-4 py-4 text-left font-semibold text-orderTextColor">Action</div>
             </div>
 
@@ -48,9 +48,11 @@ const OrdersComp = () => {
                     key={order.orderId}
                     batchId={order.batchId}
                     orderId={order.orderId}
+                    productName={order.productName}
                     quantity={order.quantity}
                     deliverySchedule={order.deliverySchedule}
                     status={order.status}
+                    variant="orders"
                   />
                 ))
               ) : (

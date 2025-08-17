@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { Header } from '../components/ui/Header';
 import { DashboardBar } from '../components/ui/DashboardBar';
+import { FilterBar } from '../components/ui/FilterBar';
 
 interface WelcomeData {
   name: string;
@@ -9,8 +11,17 @@ interface WelcomeData {
 
 interface DashboardBarConfig {
   searchPlaceholder?: string;
+  searchValue?: string;
   onSearchChange?: (value: string) => void;
   onFilterClick?: () => void;
+  onDashboardClick?: () => void;
+  onProductLogClick?: () => void;
+}
+
+interface FilterBarConfig {
+  onStatusFilter?: (status: string) => void;
+  onSortChange?: (sortBy: string) => void;
+  onScanNewProduct?: () => void;
 }
 
 interface DashboardLayoutProps {
@@ -19,17 +30,53 @@ interface DashboardLayoutProps {
   showWelcome?: boolean;
   welcomeData?: WelcomeData;
   showDashboardBar?: boolean;
+  showFilterBar?: boolean;
   dashboardBarConfig?: DashboardBarConfig;
+  filterBarConfig?: FilterBarConfig;
 }
 
 export const DashboardLayout = ({ 
   children, 
   welcomeSection, 
-  showWelcome = true, 
+  showWelcome: initialShowWelcome = true, 
   welcomeData = { name: "Bolarinwa", message: "Welcome to your order page" },
   showDashboardBar = false,
-  dashboardBarConfig
+  showFilterBar: initialShowFilterBar = false,
+  dashboardBarConfig,
+  filterBarConfig
 }: DashboardLayoutProps) => {
+  // Internal state management for navigation
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'productLog'>('dashboard');
+  const [showWelcome, setShowWelcome] = useState(initialShowWelcome);
+  const [showFilterBar, setShowFilterBar] = useState(initialShowFilterBar);
+
+  // Navigation handlers
+  const handleDashboardClick = () => {
+    setActiveSection('dashboard');
+    setShowWelcome(true);
+    setShowFilterBar(false);
+  };
+
+  const handleProductLogClick = () => {
+    setActiveSection('productLog');
+    setShowWelcome(false);
+    setShowFilterBar(true);
+  };
+
+  // Combined handlers that update internal state and call external handlers
+  const combinedDashboardClick = () => {
+    setActiveSection('dashboard');
+    setShowWelcome(true);
+    setShowFilterBar(false);
+    dashboardBarConfig?.onDashboardClick?.();
+  };
+
+  const combinedProductLogClick = () => {
+    setActiveSection('productLog');
+    setShowWelcome(false);
+    setShowFilterBar(true);
+    dashboardBarConfig?.onProductLogClick?.();
+  };
   return (
     <div className="min-h-screen bg-[#ECECEC]">
       {/* Header */}
@@ -39,8 +86,12 @@ export const DashboardLayout = ({
       {showDashboardBar && (
         <DashboardBar 
           searchPlaceholder={dashboardBarConfig?.searchPlaceholder}
+          searchValue={dashboardBarConfig?.searchValue}
           onSearchChange={dashboardBarConfig?.onSearchChange}
           onFilterClick={dashboardBarConfig?.onFilterClick}
+          activeSection={activeSection}
+          onDashboardClick={dashboardBarConfig?.onDashboardClick ? combinedDashboardClick : handleDashboardClick}
+          onProductLogClick={dashboardBarConfig?.onProductLogClick ? combinedProductLogClick : handleProductLogClick}
         />
       )}
 
@@ -58,6 +109,15 @@ export const DashboardLayout = ({
             )}
           </div>
         </div>
+      )}
+
+      {/* Filter Bar */}
+      {showFilterBar && (
+        <FilterBar 
+          onStatusFilter={filterBarConfig?.onStatusFilter}
+          onSortChange={filterBarConfig?.onSortChange}
+          onScanNewProduct={filterBarConfig?.onScanNewProduct}
+        />
       )}
 
       {/* Main Content */}

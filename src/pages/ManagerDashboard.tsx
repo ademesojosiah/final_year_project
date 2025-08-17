@@ -1,15 +1,43 @@
+import { useState } from 'react';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import DashboardWithDetails from './DashboardWithDetails';
 
 const ManagerDashboard = () => {
+  const [currentView, setCurrentView] = useState<'dashboard' | 'productLog'>('dashboard');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortBy, setSortBy] = useState('');
+
   const handleSearchChange = (value: string) => {
-    console.log('Search:', value);
-    // Implement search functionality
+    setSearchQuery(value);
   };
 
   const handleFilterClick = () => {
     console.log('Filter clicked');
-    // Implement filter functionality
+    // This could toggle a filter modal or panel
+  };
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+  };
+
+  const handleSortChange = (sortBy: string) => {
+    setSortBy(sortBy);
+  };
+
+  const handleScanNewProduct = () => {
+    console.log('Scan new product clicked');
+    // Implement scan functionality
+  };
+
+  const handleDashboardClick = () => {
+    setCurrentView('dashboard');
+    setSearchQuery(''); // Clear search when switching views
+  };
+
+  const handleProductLogClick = () => {
+    setCurrentView('productLog');
+    setSearchQuery(''); // Clear search when switching views
   };
 
   return (
@@ -18,13 +46,26 @@ const ManagerDashboard = () => {
       showWelcome={true}
       showDashboardBar={true}
       dashboardBarConfig={{
-        searchPlaceholder: "search product",
+        searchPlaceholder: currentView === 'productLog' ? "search order id" : "search product",
+        searchValue: searchQuery,
         onSearchChange: handleSearchChange,
-        onFilterClick: handleFilterClick
+        onFilterClick: handleFilterClick,
+        onDashboardClick: handleDashboardClick,
+        onProductLogClick: handleProductLogClick
+      }}
+      filterBarConfig={{
+        onStatusFilter: handleStatusFilter,
+        onSortChange: handleSortChange,
+        onScanNewProduct: handleScanNewProduct
       }}
     >
-        {/* Empty State */}
-        <DashboardWithDetails />
+        {/* Dashboard Content */}
+        <DashboardWithDetails 
+          currentView={currentView}
+          searchQuery={searchQuery}
+          statusFilter={statusFilter}
+          sortBy={sortBy}
+        />
     </DashboardLayout>
   );
 };
