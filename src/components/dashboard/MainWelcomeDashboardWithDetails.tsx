@@ -4,17 +4,18 @@ import { OrderCard } from './OrderCard';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
-interface OrderDetail {
-  id: string;
-  name: string;
-  status: OrderStatus;
-  quantity: number;
-  date: string;
+interface Order {
+  batchId: string;
   orderId: string;
+  customerName: string;
+  productName: string;
+  quantity: number;
+  deliverySchedule: string;
+  status: OrderStatus;
 }
 
 interface MainWelcomeDashboardWithDetailsProps {
-  orders: OrderDetail[];
+  orders: Order[];
 }
 
 export const MainWelcomeDashboardWithDetails: React.FC<MainWelcomeDashboardWithDetailsProps> = ({
@@ -28,7 +29,7 @@ export const MainWelcomeDashboardWithDetails: React.FC<MainWelcomeDashboardWithD
     }
     acc[status].push(order);
     return acc;
-  }, {} as Record<OrderStatus, OrderDetail[]>);
+  }, {} as Record<OrderStatus, Order[]>);
 
   const statusColumns: { status: OrderStatus; label: string; icon: string }[] = [
     { status: 'In Production', label: 'In production', icon: '●' },
@@ -66,10 +67,13 @@ export const MainWelcomeDashboardWithDetails: React.FC<MainWelcomeDashboardWithD
               </div>
 
               {/* Order Cards */}
-              <div className="mt-12 py-[16px] px-[8px] flex flex-col gap-3 flex-1 overflow-y-auto border-1 border-gray-100 bg-[#FFFDF9] rounded-2xl">
+              <div 
+                className="flex flex-col gap-3 flex-1 min-h-0 overflow-y-auto py-4 px-2 bg-[#FFFDF9] rounded-2xl border"
+                style={{ borderColor: `${statusColor}50` }}
+              >
                 {columnOrders.map((order) => (
                   <OrderCard 
-                    key={order.id}
+                    key={order.batchId}
                     order={order}
                     statusColor={statusColor}
                   />

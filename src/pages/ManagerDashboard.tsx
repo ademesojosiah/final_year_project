@@ -14,6 +14,7 @@ const ManagerDashboard = () => {
 
   return (
     <DashboardLayout 
+      welcomeData={{ name: "Josiah", message: "Welcome to your manager dashboard" }}
       showWelcome={true}
       showDashboardBar={true}
       dashboardBarConfig={{

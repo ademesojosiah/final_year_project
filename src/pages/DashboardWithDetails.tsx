@@ -2,16 +2,6 @@ import { MainWelcomeDashboardWithDetails } from '../components/dashboard/MainWel
 import { EmptyState } from '../components/ui/EmptyState';
 import { mockOrders } from '../data/mockOrders';
 
-// Transform mockOrders to match the component's expected format
-const transformedOrders = mockOrders.map((order) => ({
-  id: order.batchId,
-  name: order.productName,
-  status: order.status,
-  quantity: order.quantity,
-  date: order.deliverySchedule,
-  orderId: order.orderId,
-}));
-
 interface DashboardWithDetailsProps {
   hasOrders?: boolean;
 }
@@ -37,7 +27,7 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
 
   return (
     <MainWelcomeDashboardWithDetails 
-      orders={transformedOrders}
+      orders={mockOrders}
     />
   );
 };
