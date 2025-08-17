@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Header } from '../components/ui/Header';
 import { DashboardBar } from '../components/ui/DashboardBar';
 import { FilterBar } from '../components/ui/FilterBar';
+import { WelcomeSection } from '../components/ui/WelcomeSection';
 
 interface WelcomeData {
   name: string;
@@ -13,7 +14,6 @@ interface DashboardBarConfig {
   searchPlaceholder?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
-  onFilterClick?: () => void;
   onDashboardClick?: () => void;
   onProductLogClick?: () => void;
 }
@@ -29,6 +29,10 @@ interface DashboardLayoutProps {
   welcomeSection?: ReactNode;
   showWelcome?: boolean;
   welcomeData?: WelcomeData;
+  showWelcomeSearch?: boolean;
+  welcomeSearchPlaceholder?: string;
+  welcomeSearchValue?: string;
+  onWelcomeSearchChange?: (value: string) => void;
   showDashboardBar?: boolean;
   showFilterBar?: boolean;
   dashboardBarConfig?: DashboardBarConfig;
@@ -40,6 +44,9 @@ export const DashboardLayout = ({
   welcomeSection, 
   showWelcome: initialShowWelcome = true, 
   welcomeData = { name: "Bolarinwa", message: "Welcome to your order page" },
+  showWelcomeSearch = false,
+  welcomeSearchPlaceholder = "search order id",
+  welcomeSearchValue = "",
   showDashboardBar = false,
   showFilterBar: initialShowFilterBar = false,
   dashboardBarConfig,
@@ -88,7 +95,6 @@ export const DashboardLayout = ({
           searchPlaceholder={dashboardBarConfig?.searchPlaceholder}
           searchValue={dashboardBarConfig?.searchValue}
           onSearchChange={dashboardBarConfig?.onSearchChange}
-          onFilterClick={dashboardBarConfig?.onFilterClick}
           activeSection={activeSection}
           onDashboardClick={dashboardBarConfig?.onDashboardClick ? combinedDashboardClick : handleDashboardClick}
           onProductLogClick={dashboardBarConfig?.onProductLogClick ? combinedProductLogClick : handleProductLogClick}
@@ -97,18 +103,14 @@ export const DashboardLayout = ({
 
       {/* Welcome Section */}
       {showWelcome && (
-        <div className=" pl-14 pr-6 pt-8 pb-4">
-          <div className="container mx-auto">
-            {welcomeSection ? (
-              welcomeSection
-            ) : (
-              <div className="text-left ">
-                <h2 className="text-[32px] font-semibold text-[#2D1B00] mb-2">Hello {welcomeData.name}!</h2>
-                <p className="text-lg text-[#6B5B5B] font-light">{welcomeData.message}</p>
-              </div>
-            )}
-          </div>
-        </div>
+        <WelcomeSection
+          welcomeSection={welcomeSection}
+          welcomeData={welcomeData}
+          showSearch={showWelcomeSearch}
+          searchPlaceholder={welcomeSearchPlaceholder}
+          searchValue={welcomeSearchValue}
+          onSearchChange={dashboardBarConfig?.onSearchChange}
+        />
       )}
 
       {/* Filter Bar */}

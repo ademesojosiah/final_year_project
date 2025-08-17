@@ -4,7 +4,6 @@ interface DashboardBarProps {
   searchPlaceholder?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
-  onFilterClick?: () => void;
   activeSection?: 'dashboard' | 'productLog';
   onDashboardClick?: () => void;
   onProductLogClick?: () => void;
@@ -14,7 +13,6 @@ export const DashboardBar: React.FC<DashboardBarProps> = ({
   searchPlaceholder = "search order id",
   searchValue = "",
   onSearchChange,
-  onFilterClick, // eslint-disable-line @typescript-eslint/no-unused-vars
   activeSection = 'dashboard',
   onDashboardClick,
   onProductLogClick

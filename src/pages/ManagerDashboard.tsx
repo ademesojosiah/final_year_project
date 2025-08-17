@@ -12,11 +12,6 @@ const ManagerDashboard = () => {
     setSearchQuery(value);
   };
 
-  const handleFilterClick = () => {
-    console.log('Filter clicked');
-    // This could toggle a filter modal or panel
-  };
-
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
   };
@@ -49,7 +44,6 @@ const ManagerDashboard = () => {
         searchPlaceholder: currentView === 'productLog' ? "search order id" : "search product",
         searchValue: searchQuery,
         onSearchChange: handleSearchChange,
-        onFilterClick: handleFilterClick,
         onDashboardClick: handleDashboardClick,
         onProductLogClick: handleProductLogClick
       }}

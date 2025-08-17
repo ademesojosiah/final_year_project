@@ -1,27 +1,65 @@
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { OrderRow } from '../components/orders/OrderRow';
 import { mockOrders } from '../data/mockOrders';
-import { NotFound } from '../components/ui/NotFound';
 import { Pagination } from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { EmptyState } from '../components/ui';
 
 const ITEMS_PER_PAGE = 10;
 
-const OrdersComp = () => {
+interface OrdersCompProps {
+  searchQuery: string;
+}
+
+const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const totalPages = Math.ceil(mockOrders.length / ITEMS_PER_PAGE);
   
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentOrders = mockOrders.slice(startIndex, endIndex);
+  // Filter orders based on search
+  let filteredOrders = mockOrders;
+  
+  if (searchQuery) {
+    filteredOrders = filteredOrders.filter(order => 
+      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.orderId.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+  
+  // If there's a search query, show all filtered results without pagination
+  let currentOrders;
+  let totalPages = 1;
+  
+  if (searchQuery) {
+    currentOrders = filteredOrders;
+  } else {
+    totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    currentOrders = filteredOrders.slice(startIndex, endIndex);
+  }
+  
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: page.toString() });
   };
 
-  if (mockOrders.length === 0) {
-    return <NotFound />;
+  if (currentOrders.length === 0) {
+    return (
+      <EmptyState
+        title="No Orders Found"
+        message={searchQuery ? "No orders match your search criteria." : "You haven't placed any orders yet. Start by creating your first order."}
+        icon={
+          <img 
+            src="/icons/fluent-mdl2_product-list.png" 
+            alt="No Orders" 
+            className="w-8 h-8 opacity-50" 
+          />
+        }
+      />
+    );
   }
 
   return (
@@ -42,8 +80,7 @@ const OrdersComp = () => {
 
             {/* Order Rows */}
             <div>
-              {currentOrders.length > 0 ? (
-                currentOrders.map((order) => (
+              {currentOrders.map((order) => (
                   <OrderRow
                     key={order.orderId}
                     batchId={order.batchId}
@@ -54,23 +91,22 @@ const OrdersComp = () => {
                     status={order.status}
                     variant="orders"
                   />
-                ))
-              ) : (
-                <NotFound />
-              )}
+                ))}
             </div>
           </div>
         </div>
       </div>
       
-      {/* Pagination */}
-      <div className="mt-6">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      {/* Pagination - only show when not searching */}
+      {!searchQuery && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
     </>
   );
 };
@@ -78,9 +114,22 @@ const OrdersComp = () => {
 
 
 const Orders = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
+
   return (
-    <DashboardLayout>
-      <OrdersComp />
+    <DashboardLayout
+      showWelcomeSearch={true}
+      welcomeSearchPlaceholder="search order id"
+      welcomeSearchValue={searchQuery}
+      dashboardBarConfig={{
+        onSearchChange: handleSearchChange,
+      }}
+    >
+      <OrdersComp searchQuery={searchQuery} />
     </DashboardLayout>
   );
 };
