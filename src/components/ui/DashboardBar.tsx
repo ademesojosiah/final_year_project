@@ -17,6 +17,8 @@ export const DashboardBar: React.FC<DashboardBarProps> = ({
   onDashboardClick,
   onProductLogClick
 }) => {
+
+
   return (
     <div className="border-1 border-gray-300 text-[#000000] py-4 px-6">
       <div className="flex items-center justify-between py-2">
@@ -38,7 +40,7 @@ export const DashboardBar: React.FC<DashboardBarProps> = ({
         </button>
         
         {/* Product Log Section */}
-        <button 
+        <button
           onClick={onProductLogClick}
           className={`flex items-center w-[253px] h-[48px] justify-center p-[12px] transition-colors ${
             activeSection === 'productLog' 

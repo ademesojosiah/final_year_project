@@ -24,7 +24,7 @@ const Scanner = () => {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayout showDashBoardButton={true} welcomeData={{ name: "Josiah", message: "Welcome to your Scanning page" }}>
       <BarcodeScanner onScanSuccess={handleScanSuccess} />
       
       <ScanSuccessModal

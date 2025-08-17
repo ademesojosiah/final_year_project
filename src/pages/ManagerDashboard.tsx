@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import DashboardWithDetails from './DashboardWithDetails';
+import { useNavigate } from 'react-router-dom';
 
 const ManagerDashboard = () => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'productLog'>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [sortBy, setSortBy] = useState('');
+  const navigate = useNavigate();
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -22,6 +24,7 @@ const ManagerDashboard = () => {
 
   const handleScanNewProduct = () => {
     console.log('Scan new product clicked');
+    navigate('/scanner');
     // Implement scan functionality
   };
 
@@ -40,6 +43,7 @@ const ManagerDashboard = () => {
       welcomeData={{ name: "Josiah", message: "Welcome to your manager dashboard" }}
       showWelcome={true}
       showDashboardBar={true}
+      showFilterBar={true}
       dashboardBarConfig={{
         searchPlaceholder: currentView === 'productLog' ? "search order id" : "search product",
         searchValue: searchQuery,

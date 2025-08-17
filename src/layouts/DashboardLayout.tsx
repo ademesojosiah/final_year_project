@@ -33,6 +33,7 @@ interface DashboardLayoutProps {
   welcomeSearchPlaceholder?: string;
   welcomeSearchValue?: string;
   onWelcomeSearchChange?: (value: string) => void;
+  showDashBoardButton?: boolean;
   showPlaceOrderButton?: boolean;
   onPlaceOrderClick?: () => void;
   showDashboardBar?: boolean;
@@ -49,6 +50,7 @@ export const DashboardLayout = ({
   showWelcomeSearch = false,
   welcomeSearchPlaceholder = "search order id",
   welcomeSearchValue = "",
+  showDashBoardButton = false,
   showPlaceOrderButton = false,
   onPlaceOrderClick,
   showDashboardBar = false,
@@ -112,6 +114,7 @@ export const DashboardLayout = ({
           welcomeData={welcomeData}
           showSearch={showWelcomeSearch}
           searchPlaceholder={welcomeSearchPlaceholder}
+          showDashBoardButton={showDashBoardButton}
           searchValue={welcomeSearchValue}
           onSearchChange={dashboardBarConfig?.onSearchChange}
           showPlaceOrderButton={showPlaceOrderButton}

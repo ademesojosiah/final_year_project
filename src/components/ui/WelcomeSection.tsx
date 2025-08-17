@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface WelcomeData {
   name: string;
@@ -9,6 +10,7 @@ interface WelcomeSectionProps {
   welcomeSection?: React.ReactNode;
   welcomeData?: WelcomeData;
   showSearch?: boolean;
+  showDashBoardButton?: boolean;
   searchPlaceholder?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
@@ -20,12 +22,16 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
   welcomeSection,
   welcomeData = { name: "Bolarinwa", message: "Welcome to your order page" },
   showSearch = false,
+  showDashBoardButton = false,
   searchPlaceholder = "search order id",
   searchValue = "",
   onSearchChange,
   showPlaceOrderButton = false,
   onPlaceOrderClick
 }) => {
+const navigate = useNavigate();
+
+
   return (
     <div className="pl-14 pr-6 pt-8 pb-4">
       <div className="container mx-auto">
@@ -70,6 +76,20 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
                 className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
               >
                 Place an order
+              </button>
+            </div>
+          )}
+
+
+
+          {/* Dashboard Button - Only shown when showDashBoardButton is true */}
+          {showDashBoardButton && (
+            <div className="flex items-center ml-2">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
+              >
+                Dashboard
               </button>
             </div>
           )}

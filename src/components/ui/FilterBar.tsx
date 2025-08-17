@@ -12,7 +12,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onScanNewProduct
 }) => {
   return (
-    <div className="pt-10 pl-14 pr-6 pb-6">
+    <div className="pt-6 pl-14 pr-6 pb-6">
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           {/* Left side - All products dropdown */}
