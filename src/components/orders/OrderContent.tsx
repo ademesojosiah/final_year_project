@@ -1,6 +1,7 @@
 import React from 'react';
 import { ProgressBar } from './ProgressBar';
 import statusColors from '../dashboard/statusColors';
+import type { SheetType } from '../../data/mockOrders';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -8,6 +9,7 @@ interface OrderContentProps {
   orderId: string;
   estimatedDate: string;
   status: OrderStatus;
+  sheetType?: SheetType;
 }
 
 const getStatusColor = (status: OrderStatus) => {
@@ -24,6 +26,7 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   orderId,
   estimatedDate,
   status,
+  sheetType,
 }) => {
   const statusStyle = getStatusColor(status);
   const iconColor = statusColors[status as keyof typeof statusColors];
@@ -31,7 +34,16 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   return (
     <div className="flex flex-col items-center text-center mb-12">
       {/* Order ID */}
-      <h1 className="text-2xl font-semibold mb-8">ORD-{orderId}</h1>
+      <h1 className="text-2xl font-semibold mb-4">{orderId}</h1>
+      
+      {/* Sheet Type */}
+      {sheetType && (
+        <div className="mb-6">
+          <span className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+            {sheetType}
+          </span>
+        </div>
+      )}
 
       {/* Order Icon */}
       <div 

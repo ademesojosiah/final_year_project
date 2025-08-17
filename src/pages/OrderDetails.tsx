@@ -38,6 +38,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
           orderId={orderId}
           estimatedDate={estimatedDate}
           status={status}
+          sheetType={order?.sheetType}
         />
       </div>
     </DashboardLayout>

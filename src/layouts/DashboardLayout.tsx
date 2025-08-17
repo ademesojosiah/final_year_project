@@ -54,40 +54,36 @@ export const DashboardLayout = ({
   showPlaceOrderButton = false,
   onPlaceOrderClick,
   showDashboardBar = false,
-  showFilterBar: initialShowFilterBar = false,
+  showFilterBar = false,
   dashboardBarConfig,
   filterBarConfig
 }: DashboardLayoutProps) => {
   // Internal state management for navigation
   const [activeSection, setActiveSection] = useState<'dashboard' | 'productLog'>('dashboard');
   const [showWelcome, setShowWelcome] = useState(initialShowWelcome);
-  const [showFilterBar, setShowFilterBar] = useState(initialShowFilterBar);
 
   // Navigation handlers
   const handleDashboardClick = () => {
     setActiveSection('dashboard');
     setShowWelcome(true);
-    setShowFilterBar(false);
+
   };
 
   const handleProductLogClick = () => {
     setActiveSection('productLog');
     setShowWelcome(false);
-    setShowFilterBar(true);
   };
 
   // Combined handlers that update internal state and call external handlers
   const combinedDashboardClick = () => {
     setActiveSection('dashboard');
     setShowWelcome(true);
-    setShowFilterBar(false);
     dashboardBarConfig?.onDashboardClick?.();
   };
 
   const combinedProductLogClick = () => {
     setActiveSection('productLog');
     setShowWelcome(false);
-    setShowFilterBar(true);
     dashboardBarConfig?.onProductLogClick?.();
   };
   return (
