@@ -12,6 +12,8 @@ interface WelcomeSectionProps {
   searchPlaceholder?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  showPlaceOrderButton?: boolean;
+  onPlaceOrderClick?: () => void;
 }
 
 export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
@@ -20,7 +22,9 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
   showSearch = false,
   searchPlaceholder = "search order id",
   searchValue = "",
-  onSearchChange
+  onSearchChange,
+  showPlaceOrderButton = false,
+  onPlaceOrderClick
 }) => {
   return (
     <div className="pl-14 pr-6 pt-8 pb-4">
@@ -55,6 +59,18 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-60"
                 />
               </div>
+            </div>
+          )}
+
+          {/* Place Order Button - Only shown when showPlaceOrderButton is true */}
+          {showPlaceOrderButton && (
+            <div className="flex items-center ml-2">
+              <button
+                onClick={onPlaceOrderClick}
+                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
+              >
+                Place an order
+              </button>
             </div>
           )}
         </div>

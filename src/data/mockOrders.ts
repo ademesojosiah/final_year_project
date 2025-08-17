@@ -5,12 +5,16 @@ type OrderStatus =
   | "Packaging"
   | "Delivery";
 
-// It's good practice to define the shape of your order object
-interface Order {
+// The simplified sheet types you requested
+export type SheetType = "Fliers" | "OMR Sheets" | "Jotters";
+
+// Updated the Order interface to use the new simple SheetType
+export interface Order {
   batchId: string;
   orderId: string;
   customerName: string;
   productName: string;
+  sheetType: SheetType; // Simplified this field
   quantity: number;
   deliverySchedule: string;
   status: OrderStatus;
@@ -22,6 +26,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25456",
     customerName: "Adebayo Johnson",
     productName: "A5 Business Fliers (Glossy)",
+    sheetType: "Fliers",
     quantity: 500,
     deliverySchedule: "01/09/2025",
     status: "In Production",
@@ -31,6 +36,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25498",
     customerName: "Chiamaka Okoro",
     productName: "OMR Answer Sheets (100q)",
+    sheetType: "OMR Sheets",
     quantity: 750,
     deliverySchedule: "02/09/2025",
     status: "In Printing",
@@ -40,6 +46,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-245678",
     customerName: "Femi Adekunle",
     productName: "A4 Burial Program Flier",
+    sheetType: "Fliers",
     quantity: 1200,
     deliverySchedule: "July 08, 2025",
     status: "In Binding",
@@ -49,6 +56,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25458",
     customerName: "Zainab Aliyu",
     productName: "Custom Birthday Jotter (50 pages)",
+    sheetType: "Jotters",
     quantity: 300,
     deliverySchedule: "03/09/2025",
     status: "In Binding",
@@ -58,6 +66,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25455",
     customerName: "Emeka Nwosu",
     productName: "Wedding Invitation Cards",
+    sheetType: "Fliers",
     quantity: 1000,
     deliverySchedule: "04/09/2025",
     status: "In Production",
@@ -67,6 +76,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25495",
     customerName: "Aisha Ibrahim",
     productName: "Product Stickers (Vinyl)",
+    sheetType: "Fliers",
     quantity: 250,
     deliverySchedule: "05/09/2025",
     status: "Delivery",
@@ -76,6 +86,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25459",
     customerName: "Tunde Ojo",
     productName: "A2 Roll-up Banner",
+    sheetType: "Fliers",
     quantity: 800,
     deliverySchedule: "06/09/2025",
     status: "Packaging",
@@ -85,6 +96,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25460",
     customerName: "Ngozi Eze",
     productName: "Letterhead Paper (100gsm)",
+    sheetType: "Fliers",
     quantity: 600,
     deliverySchedule: "07/09/2025",
     status: "In Production",
@@ -92,8 +104,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123464",
     orderId: "ORD-25461",
-    customerName: "Adebayo Johnson", // Re-used customer for realism
+    customerName: "Adebayo Johnson",
     productName: "OMR Answer Sheets (200q)",
+    sheetType: "OMR Sheets",
     quantity: 450,
     deliverySchedule: "08/09/2025",
     status: "In Printing",
@@ -101,8 +114,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123465",
     orderId: "ORD-25462",
-    customerName: "Chiamaka Okoro", // Re-used customer
+    customerName: "Chiamaka Okoro",
     productName: "Company Brochures (Tri-fold)",
+    sheetType: "Fliers",
     quantity: 900,
     deliverySchedule: "09/09/2025",
     status: "In Binding",
@@ -110,8 +124,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123466",
     orderId: "ORD-25463",
-    customerName: "Femi Adekunle", // Re-used customer
+    customerName: "Femi Adekunle",
     productName: "Custom Birthday Jotter (100 pages)",
+    sheetType: "Jotters",
     quantity: 350,
     deliverySchedule: "10/09/2025",
     status: "Delivery",
@@ -119,8 +134,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123467",
     orderId: "ORD-25464",
-    customerName: "Zainab Aliyu", // Re-used customer
+    customerName: "Zainab Aliyu",
     productName: "A5 Event Flier Sheet",
+    sheetType: "Fliers",
     quantity: 700,
     deliverySchedule: "11/09/2025",
     status: "Packaging",
@@ -128,8 +144,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123468",
     orderId: "ORD-25465",
-    customerName: "Emeka Nwosu", // Re-used customer
+    customerName: "Emeka Nwosu",
     productName: "A4 Burial Program Flier",
+    sheetType: "Fliers",
     quantity: 550,
     deliverySchedule: "12/09/2025",
     status: "In Production",
@@ -137,8 +154,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123469",
     orderId: "ORD-25466",
-    customerName: "Aisha Ibrahim", // Re-used customer
+    customerName: "Aisha Ibrahim",
     productName: "Business Cards (Matte Finish)",
+    sheetType: "Fliers",
     quantity: 850,
     deliverySchedule: "13/09/2025",
     status: "In Printing",
@@ -146,8 +164,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123470",
     orderId: "ORD-25467",
-    customerName: "Tunde Ojo", // Re-used customer
+    customerName: "Tunde Ojo",
     productName: "OMR Answer Sheets (100q)",
+    sheetType: "OMR Sheets",
     quantity: 400,
     deliverySchedule: "14/09/2025",
     status: "In Binding",
@@ -155,8 +174,9 @@ export const mockOrders: Order[] = [
   {
     batchId: "123471",
     orderId: "ORD-25468",
-    customerName: "Ngozi Eze", // Re-used customer
+    customerName: "Ngozi Eze",
     productName: "Wedding Invitation Cards",
+    sheetType: "Fliers",
     quantity: 950,
     deliverySchedule: "15/09/2025",
     status: "Delivery",
@@ -166,15 +186,17 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25469",
     customerName: "Adebayo Johnson",
     productName: "A5 Business Fliers (Glossy)",
+    sheetType: "Fliers",
     quantity: 650,
     deliverySchedule: "16/09/2025",
-    status: "Delivery", // CORRECTED: Changed from "Completed"
+    status: "Delivery",
   },
   {
     batchId: "123473",
     orderId: "ORD-25470",
     customerName: "Chiamaka Okoro",
     productName: "Custom Birthday Jotter (50 pages)",
+    sheetType: "Jotters",
     quantity: 800,
     deliverySchedule: "17/09/2025",
     status: "In Production",
@@ -184,6 +206,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25471",
     customerName: "Femi Adekunle",
     productName: "A4 Burial Program Flier",
+    sheetType: "Fliers",
     quantity: 550,
     deliverySchedule: "18/09/2025",
     status: "In Printing",
@@ -193,6 +216,7 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25472",
     customerName: "Zainab Aliyu",
     productName: "OMR Answer Sheets (150q)",
+    sheetType: "OMR Sheets",
     quantity: 750,
     deliverySchedule: "19/09/2025",
     status: "In Binding",
@@ -202,8 +226,53 @@ export const mockOrders: Order[] = [
     orderId: "ORD-25473",
     customerName: "Emeka Nwosu",
     productName: "A6 Marketing Flier Sheet",
+    sheetType: "Fliers",
     quantity: 600,
     deliverySchedule: "20/09/2025",
     status: "Delivery",
   },
 ];
+
+// Function to generate a random batch ID
+const generateBatchId = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Function to generate a random order ID
+const generateOrderId = (): string => {
+  const randomNum = Math.floor(10000 + Math.random() * 90000);
+  return `ORD-${randomNum}`;
+};
+
+// Function to generate a delivery date (7-14 days from now)
+const generateDeliveryDate = (): string => {
+  const today = new Date();
+  const daysToAdd = Math.floor(Math.random() * 8) + 7; // 7-14 days
+  const deliveryDate = new Date(today.getTime() + (daysToAdd * 24 * 60 * 60 * 1000));
+  
+  const day = deliveryDate.getDate().toString().padStart(2, '0');
+  const month = (deliveryDate.getMonth() + 1).toString().padStart(2, '0');
+  const year = deliveryDate.getFullYear();
+  
+  return `${day}/${month}/${year}`;
+};
+
+
+// Function to add a new order
+export const addNewOrder = (orderData: { productName: string; quantity: number; sheetType: SheetType }): Order => {
+  const newOrder: Order = {
+    batchId: generateBatchId(),
+    orderId: generateOrderId(),
+    customerName: "Josiah",
+    productName: orderData.productName,
+    sheetType: orderData.sheetType,
+    quantity: orderData.quantity,
+    deliverySchedule: generateDeliveryDate(),
+    status: "In Production",
+  };
+
+  // Add to the beginning of the array so it appears first
+  mockOrders.unshift(newOrder);
+  
+  return newOrder;
+};

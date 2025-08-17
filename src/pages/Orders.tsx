@@ -1,6 +1,8 @@
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { OrderRow } from '../components/orders/OrderRow';
-import { mockOrders } from '../data/mockOrders';
+import { PlaceOrder } from '../components/orders/PlaceOrder';
+import { SuccessScreen } from '../components/orders/SuccessScreen';
+import { mockOrders, addNewOrder } from '../data/mockOrders';
 import { Pagination } from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
@@ -83,7 +85,6 @@ const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
               {currentOrders.map((order) => (
                   <OrderRow
                     key={order.orderId}
-                    batchId={order.batchId}
                     orderId={order.orderId}
                     productName={order.productName}
                     quantity={order.quantity}
@@ -115,21 +116,70 @@ const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
 
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentView, setCurrentView] = useState<'orders' | 'placeOrder' | 'success'>('orders');
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
 
+  const handlePlaceOrderClick = () => {
+    console.log('Place order clicked');
+    setCurrentView('placeOrder');
+  };
+
+  const handleBackToOrders = () => {
+    setCurrentView('orders');
+  };
+
+  const handleOrderSubmit = (orderData: any) => {
+    console.log('Order submitted:', orderData);
+    
+    // Add the new order to mockOrders
+    const newOrder = addNewOrder({
+      productName: orderData.productName,
+      quantity: orderData.quantity,
+      sheetType: orderData.sheetType
+    });
+    
+    console.log('New order created:', newOrder);
+    
+    // Show success screen
+    setCurrentView('success');
+  };
+
+  const handleSuccessContinue = () => {
+    setCurrentView('orders');
+  };
+
   return (
     <DashboardLayout
-      showWelcomeSearch={true}
+      showWelcomeSearch={currentView === 'orders'}
       welcomeSearchPlaceholder="search order id"
       welcomeSearchValue={searchQuery}
+      onWelcomeSearchChange={handleSearchChange}
+      showPlaceOrderButton={currentView === 'orders'}
+      onPlaceOrderClick={handlePlaceOrderClick}
+      welcomeData={{ 
+        name: "Bolarinwa", 
+        message: currentView === 'orders' ? "Welcome to your order page" : 
+                currentView === 'placeOrder' ? "Create a new order" : "Order Confirmation"
+      }}
       dashboardBarConfig={{
         onSearchChange: handleSearchChange,
       }}
     >
       <OrdersComp searchQuery={searchQuery} />
+      {currentView === 'placeOrder' && (
+        <PlaceOrder 
+          onBack={handleBackToOrders}
+          onSubmit={handleOrderSubmit}
+        />
+      )}
+      {currentView === 'success' && (
+        <SuccessScreen 
+          onContinue={handleSuccessContinue}
+        />
+      )}
     </DashboardLayout>
   );
 };

@@ -15,7 +15,6 @@ interface OrderRowProps {
 }
 
 export const OrderRow = ({ 
-  batchId, 
   orderId, 
   productName,
   customerName,
