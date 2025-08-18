@@ -9,7 +9,6 @@ const Landing: React.FC = () => {
 
       {/* Main Content Container */}
       <div className="flex flex-col items-center justify-center">
-        
         {/* Header Section - Centered */}
         <div className="flex flex-col items-center text-center max-w-2xl mb-12 relative">
           {/* Left Star Icon */}
@@ -56,9 +55,9 @@ const Landing: React.FC = () => {
         </div>
 
         {/* Features Section */}
-        <div className="w-full max-w-6xl px-6 py-16 flex flex-col items-left bg-[#FFFDF7]">
+        <div className="w-full max-w-6xl px-6 py-16 flex flex-col items-left">
           {/* Our Features Badge */}
-          <div className="bg-[#FFECB2] text-[#181000] px-4 py-2 rounded-full text-sm font-medium mb-8 inline-flex items-center w-fit">
+          <div className="bg-[#FFF2E0] text-[#181000] px-4 py-2 rounded-full text-sm font-medium mb-8 inline-flex items-center w-fit">
             <img 
               src="/icons/Star 2.png" 
               alt="Star" 
@@ -208,6 +207,7 @@ const Landing: React.FC = () => {
               <div className="relative">
                 <div className="pl-24 py-10 relative bg-white/15 backdrop-blur-sm shadow-2xl">
 
+
                               <div className="absolute left-[-4px] top-[-4px]">
                 <img 
                   src="/icons/Star 2.png" 
@@ -220,6 +220,7 @@ const Landing: React.FC = () => {
                       src="/image 3.png" 
                       alt="Dashboard Background" 
                       className=" w-full h-[539.49px] object-contain"
+
                     />
                   
                   {/* Front Image - Dashboard card/modal */}
