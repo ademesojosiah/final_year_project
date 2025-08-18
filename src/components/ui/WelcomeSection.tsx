@@ -73,7 +73,7 @@ const navigate = useNavigate();
             <div className="flex items-center ml-2">
               <button
                 onClick={onPlaceOrderClick}
-                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
+                className="bg-[#F59E0B] hover:bg-[#D97706] text-black font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
               >
                 Place an order
               </button>
@@ -87,7 +87,7 @@ const navigate = useNavigate();
             <div className="flex items-center ml-2">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
+                className="bg-[#F59E0B] hover:bg-[#D97706] text-black font-medium px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/50"
               >
                 Dashboard
               </button>
