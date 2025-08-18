@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
+import Landing from '../pages/Landing';
 import Login from '../pages/auth/Login';
 import RoleSelection from '../pages/auth/RoleSelection';
 import VerifyEmail from '../pages/auth/VerifyEmail';
@@ -8,6 +9,10 @@ import ManagerDashboard from '../pages/ManagerDashboard';
 import { OrderDetails } from '../pages/OrderDetails';
 
 export const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Landing />,
+  },
   {
     path: '/login',
     element: <Login />,
@@ -36,10 +41,6 @@ export const routes: RouteObject[] = [
   {
     path: '/orders/:orderId',
     element: <OrderDetails />,
-  },
-  {
-    path: '/',
-    element: <ManagerDashboard />,
   }
   // Add more routes here as needed
 ];
