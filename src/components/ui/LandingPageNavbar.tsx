@@ -2,8 +2,8 @@ import React from 'react';
 
 const LandingPageNavbar: React.FC = () => {
   return (
-    <div className="mx-auto w-[755px] mt-[24px] h-[60px] p-[1px] rounded-xl bg-gradient-to-r from-[#FFF2E0] via-[#5D4601] to-[#251A00]">
-      <nav className="flex items-center justify-between px-6 py-4 bg-white h-full rounded-xl">
+    <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[755px] h-[60px] p-[1px] rounded-xl bg-gradient-to-r from-[#FFF2E0] via-[#5D4601] to-[#251A00] z-50 backdrop-blur-sm">
+      <nav className="flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur-sm h-full rounded-xl shadow-lg">
         <div className="flex items-center">
           <img 
             src="/icons/logo.png" 
