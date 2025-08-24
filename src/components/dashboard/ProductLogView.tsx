@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
-import { mockOrders } from '../../data/mockOrders';
+import React, { useState, useEffect } from 'react';
+import type { Order } from '../../types/orders';
 import { OrderRow } from '../orders/OrderRow';
 import { Pagination } from '../ui/Pagination';
 
 const ITEMS_PER_PAGE = 10;
 
 interface ProductLogViewProps {
-  // Optional props for future filtering/sorting functionality
+  orders: Order[]; // Accept orders as prop
   searchQuery?: string;
   statusFilter?: string;
   sortBy?: string;
 }
 
 export const ProductLogView: React.FC<ProductLogViewProps> = ({
+  orders, // Now receive orders as prop
   searchQuery = '',
   statusFilter = '',
   sortBy = ''
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, sortBy]);
   
-  // Filter and sort orders based on props
-  let filteredOrders = mockOrders;
+  // Filter and sort orders based on props (already filtered in parent, but could be used for additional filtering)
+  let filteredOrders = orders;
 
   console.log('ProductLogView - searchQuery:', searchQuery);
-  console.log('ProductLogView - Total orders before filter:', mockOrders.length);
+  console.log('ProductLogView - Total orders before filter:', orders.length);
 
   if (searchQuery) {
-    filteredOrders = filteredOrders.filter(order => 
+    filteredOrders = filteredOrders.filter((order: Order) => 
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||

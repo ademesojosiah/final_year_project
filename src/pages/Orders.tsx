@@ -2,27 +2,31 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { OrderRow } from '../components/orders/OrderRow';
 import { PlaceOrder } from '../components/orders/PlaceOrder';
 import { SuccessScreen } from '../components/orders/SuccessScreen';
-import { mockOrders, addNewOrder } from '../data/mockOrders';
+import { OrdersAPI } from '../services/ordersAPI';
+import type { Order } from '../types/orders';
 import { Pagination } from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { EmptyState } from '../components/ui';
 
 const ITEMS_PER_PAGE = 10;
 
 interface OrdersCompProps {
   searchQuery: string;
+  orders: Order[];
+  loading: boolean;
+  error: string | null;
 }
 
-const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
+const OrdersComp = ({ searchQuery, orders, loading, error }: OrdersCompProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   
   // Filter orders based on search
-  let filteredOrders = mockOrders;
+  let filteredOrders = orders;
   
   if (searchQuery) {
-    filteredOrders = filteredOrders.filter(order => 
+    filteredOrders = filteredOrders.filter((order: Order) => 
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -42,11 +46,44 @@ const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
     const endIndex = startIndex + ITEMS_PER_PAGE;
     currentOrders = filteredOrders.slice(startIndex, endIndex);
   }
-  
 
   const handlePageChange = (page: number) => {
     setSearchParams({ page: page.toString() });
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (currentOrders.length === 0) {
     return (
@@ -117,6 +154,28 @@ const OrdersComp = ({ searchQuery }: OrdersCompProps) => {
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentView, setCurrentView] = useState<'orders' | 'placeOrder' | 'success'>('orders');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch orders on component mount
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const fetchedOrders = await OrdersAPI.getAllOrders();
+      setOrders(fetchedOrders);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch orders. Please try again.');
+      console.error('Error fetching orders:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -131,20 +190,32 @@ const Orders = () => {
     setCurrentView('orders');
   };
 
-  const handleOrderSubmit = (orderData: any) => {
+  const handleOrderSubmit = async (orderData: any) => {
     console.log('Order submitted:', orderData);
     
-    // Add the new order to mockOrders
-    const newOrder = addNewOrder({
-      productName: orderData.productName,
-      quantity: orderData.quantity,
-      sheetType: orderData.sheetType
-    });
-    
-    console.log('New order created:', newOrder);
-    
-    // Show success screen
-    setCurrentView('success');
+    try {
+      // Create the new order via API
+      const newOrder = await OrdersAPI.createOrder({
+        customerName: orderData.customerName || 'Unknown Customer',
+        productName: orderData.productName,
+        quantity: orderData.quantity,
+        sheetType: orderData.sheetType,
+        deliverySchedule: orderData.deliverySchedule || new Date().toISOString().split('T')[0],
+        status: 'In Production'
+      });
+      
+      console.log('New order created:', newOrder);
+      
+      // Refresh the orders list
+      await fetchOrders();
+      
+      // Show success screen
+      setCurrentView('success');
+    } catch (error) {
+      console.error('Error creating order:', error);
+      // You might want to show an error message to the user here
+      alert('Failed to create order. Please try again.');
+    }
   };
 
   const handleSuccessContinue = () => {
@@ -168,7 +239,12 @@ const Orders = () => {
         onSearchChange: handleSearchChange,
       }}
     >
-      <OrdersComp searchQuery={searchQuery} />
+      <OrdersComp 
+        searchQuery={searchQuery} 
+        orders={orders}
+        loading={loading}
+        error={error}
+      />
       {currentView === 'placeOrder' && (
         <PlaceOrder 
           onBack={handleBackToOrders}

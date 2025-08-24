@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProgressBar } from './ProgressBar';
 import statusColors from '../dashboard/statusColors';
-import type { SheetType } from '../../data/mockOrders';
+import type { SheetType } from '../../types/orders';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 

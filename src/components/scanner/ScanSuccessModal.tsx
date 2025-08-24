@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import type { Order } from '../../types/orders';
 
 interface ScanSuccessModalProps {
   isOpen: boolean;
   scannedCode: string;
+  currentOrder: Order | null;
+  statusTransition: { nextStatus: string; action: string } | null;
+  isLoading: boolean;
   onContinue: () => void;
   onCancel: () => void;
 }
@@ -10,6 +14,9 @@ interface ScanSuccessModalProps {
 export const ScanSuccessModal: React.FC<ScanSuccessModalProps> = ({ 
   isOpen, 
   scannedCode, 
+  currentOrder,
+  statusTransition,
+  isLoading,
   onContinue,
   onCancel
 }) => {
@@ -32,9 +39,9 @@ export const ScanSuccessModal: React.FC<ScanSuccessModalProps> = ({
           }
           return 100;
         }
-        return prev + 2; // Increase by 2% every interval (50 intervals = 100%)
+        return prev + 1.25; // Increase by 1.25% every interval (80 intervals = 100%)
       });
-    }, 100); // Update every 100ms, so 5 seconds total
+    }, 100); // Update every 100ms, so 8 seconds total
 
     return () => clearInterval(interval);
   }, [isOpen, isCancelled, onContinue]);
@@ -72,8 +79,13 @@ export const ScanSuccessModal: React.FC<ScanSuccessModalProps> = ({
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Scan Successful
         </h2>
+        
         <p className="text-gray-600 mb-6 leading-relaxed">
-          Moving products <span className="font-semibold text-primary">{scannedCode}</span> from pending to Packaging
+          {currentOrder && statusTransition ? (
+            <>Moving products <span className="font-semibold text-primary">{scannedCode}</span> from <strong>{currentOrder.status}</strong> to <strong>{statusTransition.nextStatus}</strong></>
+          ) : (
+            <>Processing order <span className="font-semibold text-primary">{scannedCode}</span>...</>
+          )}
         </p>
 
         {/* Progress Bar */}
@@ -84,20 +96,22 @@ export const ScanSuccessModal: React.FC<ScanSuccessModalProps> = ({
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-sm text-gray-500">Auto-continuing in {Math.ceil((100 - progress) / 20)} seconds...</p>
+          <p className="text-sm text-gray-500">Auto-continuing in {Math.ceil((100 - progress) / 12.5)} seconds...</p>
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-between align-center">
           <button
             onClick={onContinue}
-            className="border-1 border-primary text-primary py-3 px-6 rounded-xl hover:bg-primary/60 transition-colors font-semibold text-lg"
+            disabled={isLoading}
+            className="border-1 border-primary text-primary py-3 px-6 rounded-xl hover:bg-primary/60 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Continue
+            {isLoading ? 'Processing...' : 'Continue'}
           </button>
           <button
             onClick={handleCancel}
-            className="bg-[#B60000] text-white py-3 px-6 rounded-xl hover:bg-[#B60000]/20 transition-colors font-semibold text-lg"
+            disabled={isLoading}
+            className="bg-[#B60000] text-white py-3 px-6 rounded-xl hover:bg-[#B60000]/20 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

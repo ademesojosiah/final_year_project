@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LandingPageNavbar from '../components/ui/LandingPageNavbar';
 import TestimonialCard from '../components/ui/TestimonialCard';
 
 const Landing: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(2); // Question 3 is open by default
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleGetStarted = () => {
+    navigate('/dashboard');
   };
   return (
     <div className="min-h-screen bg-white">
@@ -49,7 +55,10 @@ const Landing: React.FC = () => {
             your customers in the loop.
           </p>
           
-          <button className="border border-[#7A5C00] text-[#181000] px-8 py-3 rounded-full text-lg hover:bg-[#181000] hover:text-[#FFF2E0] transition-colors">
+          <button 
+            onClick={handleGetStarted}
+            className="border border-[#7A5C00] text-[#181000] px-8 py-3 rounded-full text-lg hover:bg-[#181000] hover:text-[#FFF2E0] transition-colors"
+          >
             Get started
           </button>
         </div>
@@ -410,7 +419,10 @@ const Landing: React.FC = () => {
               </div>
 
               {/* Button */}
-              <button className="bg-[#181000] text-[#FFF2E0] px-6 py-2 rounded-md text-base hover:bg-gray-800 transition-colors">
+              <button 
+                onClick={handleGetStarted}
+                className="bg-[#181000] text-[#FFF2E0] px-6 py-2 rounded-md text-base hover:bg-gray-800 transition-colors"
+              >
                 Start for free
               </button>
             </div>

@@ -1,7 +1,9 @@
 import { MainWelcomeDashboardWithDetails } from '../components/dashboard/MainWelcomeDashboardWithDetails';
 import { ProductLogView } from '../components/dashboard/ProductLogView';
 import { EmptyState } from '../components/ui/EmptyState';
-import { mockOrders } from '../data/mockOrders';
+import { OrdersAPI } from '../services/ordersAPI';
+import type { Order } from '../types/orders';
+import { useState, useEffect } from 'react';
 
 interface DashboardWithDetailsProps {
   hasOrders?: boolean;
@@ -18,15 +20,40 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
   statusFilter = '',
   sortBy = ''
 }) => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch orders function
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const fetchedOrders = await OrdersAPI.getAllOrders();
+      setOrders(fetchedOrders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // Refetch data when view changes to ensure fresh data
+  useEffect(() => {
+    fetchOrders();
+  }, [currentView]);
+
   // Filter orders based on search and filters
-  let filteredOrders = mockOrders;
+  let filteredOrders = orders;
 
   console.log('DashboardWithDetails - searchQuery:', searchQuery);
   console.log('DashboardWithDetails - currentView:', currentView);
-  console.log('DashboardWithDetails - Total orders before filter:', mockOrders.length);
+  console.log('DashboardWithDetails - Total orders before filter:', orders.length);
 
   if (searchQuery) {
-    filteredOrders = filteredOrders.filter(order => 
+    filteredOrders = filteredOrders.filter((order: Order) => 
       order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.batchId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -62,6 +89,15 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
   }
 
   if (!hasOrders || filteredOrders.length === 0) {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <span className="ml-3 text-gray-600">Loading orders...</span>
+        </div>
+      );
+    }
+
     return (
       <EmptyState
         title="No Orders Found"
@@ -79,12 +115,31 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
 
   // Render based on current view
   if (currentView === 'productLog') {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <span className="ml-3 text-gray-600">Loading product log...</span>
+        </div>
+      );
+    }
+
     return (
       <ProductLogView 
+        orders={filteredOrders}
         searchQuery={searchQuery}
         statusFilter={statusFilter}
         sortBy={sortBy}
       />
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-3 text-gray-600">Loading dashboard...</span>
+      </div>
     );
   }
 

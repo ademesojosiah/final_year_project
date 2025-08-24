@@ -172,7 +172,7 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({onScanSuccess}) =
       <input
         ref={hiddenInputRef}
         type="text"
-        className="sr-only opacity-0 absolute -top-10 -left-10 w-1 h-1"
+        className="sr-only opacity-100 absolute -top-10 -left-10 w-1 h-1"
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onBlur={ensureFocus}
