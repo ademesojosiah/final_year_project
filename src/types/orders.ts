@@ -17,5 +17,6 @@ export interface Order {
   sheetType: SheetType; // Simplified this field
   quantity: number;
   deliverySchedule: string;
+  dateIssued: string; // Date when the order was issued
   status: OrderStatus;
 }

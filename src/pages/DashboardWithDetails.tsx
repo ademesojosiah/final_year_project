@@ -130,6 +130,7 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
         searchQuery={searchQuery}
         statusFilter={statusFilter}
         sortBy={sortBy}
+        onOrdersChange={fetchOrders}
       />
     );
   }

@@ -41,7 +41,7 @@ export class OrdersAPI {
   }
 
   // Create new order
-  static async createOrder(orderData: Omit<Order, 'orderId' | 'batchId'>): Promise<Order> {
+  static async createOrder(orderData: Omit<Order, 'orderId' | 'batchId' | "dateIssued">): Promise<Order> {
     try {
       const response = await fetch(`${BASE_URL}/api/orders`, {
         method: 'POST',
