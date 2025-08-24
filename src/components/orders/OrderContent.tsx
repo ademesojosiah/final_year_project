@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 import { ProgressBar } from './ProgressBar';
 import statusColors from '../dashboard/statusColors';
 import type { SheetType } from '../../types/orders';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
+
+// Interface for real-time order update events from backend
+interface OrderUpdateEvent {
+  orderId: string;           // The order ID being updated
+  status: OrderStatus;       // New status of the order  
+  estimatedDate?: string;    // Optional: Updated estimated completion date
+  timestamp: string;         // ISO timestamp of when update occurred
+  message?: string;          // Optional: Custom message to display to user
+}
 
 interface OrderContentProps {
   orderId: string;
@@ -24,17 +34,97 @@ const getStatusColor = (status: OrderStatus) => {
 
 export const OrderContent: React.FC<OrderContentProps> = ({
   orderId,
-  estimatedDate,
-  status,
+  estimatedDate: initialEstimatedDate,
+  status: initialStatus,
   sheetType,
 }) => {
-  const statusStyle = getStatusColor(status);
-  const iconColor = statusColors[status as keyof typeof statusColors];
+  // State for real-time updates
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(initialStatus);
+  const [currentEstimatedDate, setCurrentEstimatedDate] = useState(initialEstimatedDate);
+  const [updateMessage, setUpdateMessage] = useState<string>('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Setup Socket.IO connection and listen for order updates
+  useEffect(() => {
+    // Connect to Socket.IO server
+    const socket = io('http://localhost:3000');
+
+    // Handle connection
+    socket.on('connect', () => {
+      console.log('✅ Connected to Socket.IO server:', socket.id);
+      setIsConnected(true);
+      
+      // Subscribe to this specific order's updates
+      socket.emit('subscribe', { orderId });
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('❌ Socket.IO connection failed:', error);
+      setIsConnected(false);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('🔌 Disconnected from Socket.IO server');
+      setIsConnected(false);
+    });
+
+    // Listen for order-specific updates
+    socket.on(`${orderId}/update`, (updateEvent: OrderUpdateEvent) => {
+      console.log('📦 Real-time order update received:', updateEvent);
+      
+      // Validate that this update is for the current order
+      if (updateEvent.orderId === orderId) {
+        setIsUpdating(true);
+        
+        // Update with smooth animation
+        setTimeout(() => {
+          setCurrentStatus(updateEvent.status);
+          
+          if (updateEvent.estimatedDate) {
+            setCurrentEstimatedDate(updateEvent.estimatedDate);
+          }
+          
+          if (updateEvent.message) {
+            setUpdateMessage(updateEvent.message);
+          }
+          
+          setIsUpdating(false);
+          
+          // Clear update message after 5 seconds
+          setTimeout(() => setUpdateMessage(''), 5000);
+        }, 300);
+      }
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      console.log('🔌 Closing Socket.IO connection');
+      socket.disconnect();
+    };
+  }, [orderId]);
+
+  const statusStyle = getStatusColor(currentStatus);
+  const iconColor = statusColors[currentStatus as keyof typeof statusColors];
 
   return (
     <div className="flex flex-col items-center text-center mb-12">
       {/* Order ID */}
       <h1 className="text-2xl font-semibold mb-4">{orderId}</h1>
+      
+      {/* Connection Status Indicator */}
+      <div className="mb-4">
+        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs ${
+          isConnected 
+            ? 'bg-green-100 text-green-800' 
+            : 'bg-yellow-100 text-yellow-800'
+        }`}>
+          <div className={`w-2 h-2 rounded-full mr-2 ${
+            isConnected ? 'bg-green-500' : 'bg-yellow-500'
+          }`}></div>
+          {isConnected ? 'Live updates enabled' : 'Live updates unavailable'}
+        </div>
+      </div>
       
       {/* Sheet Type */}
       {sheetType && (
@@ -45,13 +135,22 @@ export const OrderContent: React.FC<OrderContentProps> = ({
         </div>
       )}
 
-      {/* Order Icon */}
+      {/* Real-time Update Notification */}
+      {updateMessage && (
+        <div className="mb-4 px-4 py-2 bg-green-100 text-green-800 rounded-lg text-sm animate-fade-in">
+          📦 {updateMessage}
+        </div>
+      )}
+
+      {/* Order Icon with Update Animation */}
       <div 
-        className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
+        className={`w-24 h-24 rounded-full flex items-center justify-center mb-8 transition-all duration-500 ${
+          isUpdating ? 'scale-110 shadow-lg' : ''
+        }`}
         style={{ backgroundColor: iconColor + '20' }}
       >
         <svg 
-          className="w-12 h-12" 
+          className={`w-12 h-12 transition-transform duration-500 ${isUpdating ? 'rotate-12' : ''}`}
           viewBox="0 0 24 24" 
           fill="none"
           style={{ color: iconColor }}
@@ -74,19 +173,21 @@ export const OrderContent: React.FC<OrderContentProps> = ({
       {/* Estimated Completion Date */}
       <div className="mb-6">
         <h3 className="text-lg font-medium mb-2">
-          Estimated completion date: {estimatedDate}
+          Estimated completion date: {currentEstimatedDate}
         </h3>
         <span 
-          className="px-4 py-2 rounded-full text-sm font-medium"
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-500 ${
+            isUpdating ? 'scale-105 shadow-md' : ''
+          }`}
           style={statusStyle}
         >
-          {status}
+          {currentStatus}
         </span>
       </div>
 
       {/* Progress Bar */}
       <div className="w-full mb-12">
-        <ProgressBar currentStatus={status} />
+        <ProgressBar currentStatus={currentStatus} />
       </div>
 
       {/* Action Buttons */}
