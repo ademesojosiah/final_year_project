@@ -8,8 +8,18 @@ import { Pagination } from '../components/ui/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { EmptyState } from '../components/ui';
+import { io } from 'socket.io-client';
 
 const ITEMS_PER_PAGE = 10;
+
+// Interface for real-time order update events
+interface OrderUpdateEvent {
+  orderId: string;
+  status: string;
+  estimatedDate?: string;
+  timestamp: string;
+  message?: string;
+}
 
 interface OrdersCompProps {
   searchQuery: string;
@@ -157,11 +167,76 @@ const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<string>('');
 
   // Fetch orders on component mount
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  // Setup Socket.IO connection for real-time order updates
+  useEffect(() => {
+    const socket = io('http://localhost:3000');
+
+    // Handle connection
+    socket.on('connect', () => {
+      console.log('✅ Orders page connected to Socket.IO:', socket.id);
+      setIsConnected(true);
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('❌ Orders page Socket.IO connection failed:', error);
+      setIsConnected(false);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('🔌 Orders page disconnected from Socket.IO');
+      setIsConnected(false);
+    });
+
+    // Listen for any order updates (wildcard pattern)
+    socket.on('order-updated', (updateEvent: OrderUpdateEvent) => {
+      console.log('📦 Order update received on orders page:', updateEvent);
+      handleOrderUpdate(updateEvent);
+    });
+
+    // Also listen for specific order update patterns
+    socket.onAny((eventName: string, updateEvent: OrderUpdateEvent) => {
+      // Check if this is an order update event (pattern: "{orderId}/update")
+      if (eventName.endsWith('/update') && updateEvent?.orderId) {
+        console.log('📦 Specific order update received:', eventName, updateEvent);
+        handleOrderUpdate(updateEvent);
+      }
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      console.log('🔌 Closing Socket.IO connection on orders page');
+      socket.disconnect();
+    };
+  }, []);
+
+  const handleOrderUpdate = (updateEvent: OrderUpdateEvent) => {
+    setLastUpdate(`Order ${updateEvent.orderId} updated to ${updateEvent.status}`);
+    
+    // Update the specific order in the orders list
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.orderId === updateEvent.orderId 
+          ? { 
+              ...order, 
+              status: updateEvent.status as any,
+              // Update estimated date if provided
+              ...(updateEvent.estimatedDate && { estimatedDate: updateEvent.estimatedDate })
+            }
+          : order
+      )
+    );
+
+    // Clear the update message after 5 seconds
+    setTimeout(() => setLastUpdate(''), 5000);
+  };
 
   const fetchOrders = async () => {
     try {
@@ -239,6 +314,30 @@ const Orders = () => {
         onSearchChange: handleSearchChange,
       }}
     >
+      {/* Real-time Connection Status and Updates */}
+      {currentView === 'orders' && (
+        <div className="mb-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          {/* Connection Status */}
+          <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs ${
+            isConnected 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            <div className={`w-2 h-2 rounded-full mr-2 ${
+              isConnected ? 'bg-green-500' : 'bg-yellow-500'
+            }`}></div>
+            {isConnected ? 'Live updates enabled' : 'Live updates unavailable'}
+          </div>
+          
+          {/* Last Update Message */}
+          {lastUpdate && (
+            <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs animate-fade-in">
+              📦 {lastUpdate}
+            </div>
+          )}
+        </div>
+      )}
+      
       <OrdersComp 
         searchQuery={searchQuery} 
         orders={orders}
