@@ -62,7 +62,6 @@ const RoleSelection = () => {
                 >
                   <option value="">Select a role</option>
                   <option value="user">User</option>
-                  <option value="worker">Worker</option>
                   <option value="manager">Manager</option>
                 </select>
               </div>

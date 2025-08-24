@@ -1,17 +1,36 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { AuthLayout } from '../../layouts/AuthLayout';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  
+  // Get the page user was trying to access
+  const from = location.state?.from?.pathname || '/orders';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt with:', { email, password });
-    navigate('/');
+    setError('');
+    setIsLoading(true);
+    
+    try {
+      await login(email, password);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError('Invalid email or password');
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -59,6 +78,13 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <label className="flex items-center text-sm text-[#6B5B5B] cursor-pointer">
                 <input type="checkbox" className="w-4 h-4 rounded border-[#E8E8E8] text-[#3E2800] focus:ring-[#3E2800] focus:ring-offset-0 mr-2" />
@@ -74,9 +100,17 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-[#2D1B00] text-white py-3.5 px-4 rounded-xl hover:from-[#2D1B00] hover:to-[#1F1200] transition-all duration-200 text-[15px] font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-primary to-[#2D1B00] text-white py-3.5 px-4 rounded-xl hover:from-[#2D1B00] hover:to-[#1F1200] transition-all duration-200 text-[15px] font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              Sign in
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign in'
+              )}
             </button>
 
             <div className="relative py-4">
