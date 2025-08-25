@@ -5,7 +5,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'manager' | 'admin';
+  role: 'user' | 'manager';
 }
 
 interface AuthContextType {
@@ -56,25 +56,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       
-      // TODO: Replace with actual API call
-      // const response = await AuthAPI.login(email, password);
-      console.log('Login attempt with:', { email, password });
+      // Dummy user accounts for testing
+      const dummyUsers = [
+        {
+          email: 'manager@test.com',
+          password: 'manager123',
+          user: {
+            id: '1',
+            name: 'Manager User',
+            email: 'manager@test.com',
+            role: 'manager' as const
+          }
+        },
+        {
+          email: 'user@test.com', 
+          password: 'user123',
+          user: {
+            id: '2',
+            name: 'Regular User',
+            email: 'user@test.com',
+            role: 'user' as const
+          }
+        }
+      ];
       
-      // For now, simulate login
-      const mockUser: User = {
-        id: '1',
-        name: 'Jojo A',
-        email: email,
-        role: 'manager'
-      };
+      // Find matching user
+      const foundUser = dummyUsers.find(
+        account => account.email === email && account.password === password
+      );
       
-      const mockToken = 'mock-jwt-token';
+      if (!foundUser) {
+        throw new Error('Invalid email or password');
+      }
+      
+      const mockToken = `mock-jwt-token-${foundUser.user.role}`;
       
       // Store auth data
       localStorage.setItem('authToken', mockToken);
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      localStorage.setItem('userData', JSON.stringify(foundUser.user));
       
-      setUser(mockUser);
+      setUser(foundUser.user);
     } catch (error) {
       console.error('Login error:', error);
       throw error;

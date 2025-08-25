@@ -48,7 +48,7 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   // Setup Socket.IO connection and listen for order updates
   useEffect(() => {
     // Connect to Socket.IO server
-    const socket = io('http://localhost:3000');
+    const socket = io('https://final-year-project-backend-ubk7.onrender.com');
 
     // Handle connection
     socket.on('connect', () => {
@@ -192,12 +192,6 @@ export const OrderContent: React.FC<OrderContentProps> = ({
 
       {/* Action Buttons */}
       <div className="flex gap-4">
-        <button className="bg-primary text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-primary/90">
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16ZM16 17H8V11C8 8.52 9.51 6.5 12 6.5C14.49 6.5 16 8.52 16 11V17Z" fill="currentColor"/>
-          </svg>
-          Notify me when its ready
-        </button>
         <button className="border border-gray-200 px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-50">
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2V22L7.5 20.5L9 22L10.5 20.5L12 22L13.5 20.5L15 22L16.5 20.5L18 22L19.5 20.5L21 22V2L19.5 3.5ZM19 19.09H5V4.91H19V19.09ZM7 15H17V17H7V15ZM7 11H17V13H7V11ZM7 7H17V9H7V7Z" fill="currentColor"/>

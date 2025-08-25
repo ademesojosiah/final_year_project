@@ -1,6 +1,6 @@
 import type { Order } from '../types/orders';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://final-year-project-backend-ubk7.onrender.com';
 
 export class OrdersAPI {
   // Get all orders

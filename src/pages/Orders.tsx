@@ -177,7 +177,7 @@ const Orders = () => {
 
   // Setup Socket.IO connection for real-time order updates
   useEffect(() => {
-    const socket = io('http://localhost:3000');
+    const socket = io('https://final-year-project-backend-ubk7.onrender.com');
 
     // Handle connection
     socket.on('connect', () => {

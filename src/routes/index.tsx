@@ -40,7 +40,7 @@ export const routes: RouteObject[] = [
   {
     path: '/orders',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute requireRole="user">
         <Orders />
       </ProtectedRoute>
     ),
@@ -48,7 +48,7 @@ export const routes: RouteObject[] = [
   {
     path: '/scanner',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute requireRole="manager">
         <Scanner />
       </ProtectedRoute>
     ),
@@ -56,7 +56,7 @@ export const routes: RouteObject[] = [
   {
     path: '/orders/:orderId',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute requireRole="user" >
         <OrderDetails />
       </ProtectedRoute>
     ),

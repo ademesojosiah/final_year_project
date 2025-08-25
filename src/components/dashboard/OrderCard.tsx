@@ -15,9 +15,10 @@ interface Order {
 interface OrderCardProps {
   order: Order;
   statusColor: string;
+  isDragging?: boolean;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({ order, statusColor }) => {
+export const OrderCard: React.FC<OrderCardProps> = ({ order, statusColor, isDragging = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = () => {
@@ -43,7 +44,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, statusColor }) => {
   const deliveryStatus = getDeliveryStatus();
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className={`bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow ${
+      isDragging ? 'shadow-lg ring-2 ring-blue-400' : ''
+    }`}>
       {/* Order Header - Always Visible */}
       <div className={"px-3 py-2"}>
         {/* Order ID and Toggle */}

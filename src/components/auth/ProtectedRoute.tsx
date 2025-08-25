@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireRole?: 'user' | 'manager' | 'admin';
+  requireRole?: 'user' | 'manager';
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
@@ -31,8 +31,19 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  // Check role-based access
+  // Check role-based access - redirect to appropriate page based on user role
   if (requireRole && user?.role !== requireRole) {
+    // If a user tries to access manager dashboard, redirect to orders
+    if (requireRole === 'manager' && user?.role === 'user') {
+      return <Navigate to="/orders" replace />;
+    }
+    
+    // If a manager tries to access user-only features, redirect to dashboard
+    if (requireRole === 'user' && user?.role === 'manager') {
+      return <Navigate to="/dashboard" replace />;
+    }
+    
+    // Fallback to access denied for any other role mismatches
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
