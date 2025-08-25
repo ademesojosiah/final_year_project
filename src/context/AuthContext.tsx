@@ -8,11 +8,18 @@ interface User {
   role: 'user' | 'manager';
 }
 
+interface MockUserAccount {
+  email: string;
+  password: string;
+  user: User;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, role: 'user' | 'manager') => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
 }
@@ -26,6 +33,30 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Mock users storage - in real app this would be in backend
+  const [mockUsers, setMockUsers] = useState<MockUserAccount[]>([
+    {
+      email: 'manager@test.com',
+      password: 'manager123',
+      user: {
+        id: '1',
+        name: 'Sarah Johnson',
+        email: 'manager@test.com',
+        role: 'manager'
+      }
+    },
+    {
+      email: 'user@test.com', 
+      password: 'user123',
+      user: {
+        id: '2',
+        name: 'John Smith',
+        email: 'user@test.com',
+        role: 'user'
+      }
+    }
+  ]);
 
   // Check for existing auth token on app load
   useEffect(() => {
@@ -56,32 +87,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       
-      // Dummy user accounts for testing
-      const dummyUsers = [
-        {
-          email: 'manager@test.com',
-          password: 'manager123',
-          user: {
-            id: '1',
-            name: 'Manager',
-            email: 'manager@test.com',
-            role: 'manager' as const
-          }
-        },
-        {
-          email: 'Customer', 
-          password: 'user123',
-          user: {
-            id: '2',
-            name: 'John Smith',
-            email: 'user@test.com',
-            role: 'user' as const
-          }
-        }
-      ];
-      
-      // Find matching user
-      const foundUser = dummyUsers.find(
+      // Find matching user from mock users
+      const foundUser = mockUsers.find(
         account => account.email === email && account.password === password
       );
       
@@ -98,6 +105,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(foundUser.user);
     } catch (error) {
       console.error('Login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signup = async (name: string, email: string, password: string, role: 'user' | 'manager') => {
+    try {
+      setIsLoading(true);
+      
+      // Check if user already exists
+      const existingUser = mockUsers.find(account => account.email === email);
+      if (existingUser) {
+        throw new Error('User with this email already exists');
+      }
+      
+      // Create new user
+      const newUser = {
+        email,
+        password,
+        user: {
+          id: (mockUsers.length + 1).toString(),
+          name,
+          email,
+          role
+        }
+      };
+      
+      // Add to mock users
+      setMockUsers(prev => [...prev, newUser]);
+      
+      // Create token and login the new user
+      const mockToken = `mock-jwt-token-${role}`;
+      localStorage.setItem('authToken', mockToken);
+      localStorage.setItem('userData', JSON.stringify(newUser.user));
+      
+      setUser(newUser.user);
+    } catch (error) {
+      console.error('Signup error:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -126,6 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!user,
     isLoading,
     login,
+    signup,
     logout,
     updateUser,
   };
