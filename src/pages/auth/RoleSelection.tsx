@@ -136,7 +136,15 @@ const RoleSelection = () => {
           </button>
 
           <p className="text-center text-sm text-[#6B5B5B]">
-            Already have an account? <a href="/login" className="text-[#3E2800] hover:text-[#2D1B00] font-medium">Login here</a>
+            Already have an account? 
+            
+             <button 
+                  type="button"
+                  className="text-[#8B6F47] font-semibold hover:text-[#6B5537] transition-colors cursor-pointer"
+                  onClick={() => navigate('/auth/login')}
+                >
+                  Login here
+                </button>
           </p>
         </form>
       </Card>
