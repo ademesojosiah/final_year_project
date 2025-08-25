@@ -6,6 +6,7 @@ import { ScanFailedModal } from '../components/scanner/ScanFailedModal';
 import { useNavigate } from 'react-router-dom';
 import { OrdersAPI } from '../services/ordersAPI';
 import type { Order } from '../types/orders';
+import { useAuth } from '../context/AuthContext';
 
 const Scanner = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -15,6 +16,7 @@ const Scanner = () => {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Function to determine the next status in the workflow
   const getNextStatus = (currentStatus: string): { nextStatus: string; action: string } => {
@@ -126,7 +128,7 @@ const Scanner = () => {
   };
 
   return (
-    <DashboardLayout showDashBoardButton={true} welcomeData={{ name: "Josiah", message: "Welcome to your Scanning page" }}>
+    <DashboardLayout showDashBoardButton={true} welcomeData={{ name: user?.name || "User", message: "Welcome to your Scanning page" }}>
       <div className="relative">
         <BarcodeScanner onScanSuccess={handleScanSuccess} />
         

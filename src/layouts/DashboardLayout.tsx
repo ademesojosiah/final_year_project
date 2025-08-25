@@ -46,7 +46,7 @@ export const DashboardLayout = ({
   children, 
   welcomeSection, 
   showWelcome: initialShowWelcome = true, 
-  welcomeData = { name: "Bolarinwa", message: "Welcome to your order page" },
+  welcomeData = { name: "User", message: "Welcome to your order page" },
   showWelcomeSearch = false,
   welcomeSearchPlaceholder = "search order id",
   welcomeSearchValue = "",

@@ -20,7 +20,7 @@ interface WelcomeSectionProps {
 
 export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
   welcomeSection,
-  welcomeData = { name: "Bolarinwa", message: "Welcome to your order page" },
+  welcomeData = { name: "User", message: "Welcome to your order page" },
   showSearch = false,
   showDashBoardButton = false,
   searchPlaceholder = "search order id",

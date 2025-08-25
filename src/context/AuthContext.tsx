@@ -63,17 +63,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           password: 'manager123',
           user: {
             id: '1',
-            name: 'Manager User',
+            name: 'Manager',
             email: 'manager@test.com',
             role: 'manager' as const
           }
         },
         {
-          email: 'user@test.com', 
+          email: 'Customer', 
           password: 'user123',
           user: {
             id: '2',
-            name: 'Regular User',
+            name: 'John Smith',
             email: 'user@test.com',
             role: 'user' as const
           }

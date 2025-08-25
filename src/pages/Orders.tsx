@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { EmptyState } from '../components/ui';
 import { io } from 'socket.io-client';
+import { useAuth } from '../context/AuthContext';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -169,6 +170,7 @@ const Orders = () => {
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>('');
+  const { user } = useAuth();
 
   // Fetch orders on component mount
   useEffect(() => {
@@ -306,7 +308,7 @@ const Orders = () => {
       showPlaceOrderButton={currentView === 'orders'}
       onPlaceOrderClick={handlePlaceOrderClick}
       welcomeData={{ 
-        name: "Bolarinwa", 
+        name: user?.name || "User", 
         message: currentView === 'orders' ? "Welcome to your order page" : 
                 currentView === 'placeOrder' ? "Create a new order" : "Order Confirmation"
       }}

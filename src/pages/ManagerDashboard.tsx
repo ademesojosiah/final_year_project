@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import DashboardWithDetails from './DashboardWithDetails';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const ManagerDashboard = () => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'productLog'>('dashboard');
@@ -9,6 +10,7 @@ const ManagerDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [sortBy, setSortBy] = useState('');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
@@ -40,7 +42,7 @@ const ManagerDashboard = () => {
 
   return (
     <DashboardLayout 
-      welcomeData={{ name: "Josiah", message: "Welcome to your manager dashboard" }}
+      welcomeData={{ name: user?.name || "Manager", message: "Welcome to your manager dashboard" }}
       showWelcome={true}
       showDashboardBar={true}
       showFilterBar={true}

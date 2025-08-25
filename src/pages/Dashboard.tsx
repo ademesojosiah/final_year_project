@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../layouts/DashboardLayout';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleScanClick = () => {
     navigate('/scanner');
@@ -11,7 +13,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout 
       welcomeData={{ 
-        name: "Bolarinwa", 
+        name: user?.name || "User", 
         message: "Welcome to your order page" 
       }}
     >
