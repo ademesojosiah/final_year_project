@@ -98,6 +98,10 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
           estimatedDate={estimatedDate}
           status={status}
           sheetType={order?.sheetType}
+          customerName={order?.customerName}
+          productName={order?.productName}
+          quantity={order?.quantity}
+          dateIssued={order?.dateIssued}
         />
       </div>
     </DashboardLayout>

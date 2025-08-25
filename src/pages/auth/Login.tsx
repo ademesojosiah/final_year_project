@@ -27,7 +27,6 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (err) {
       setError('Invalid email or password');
-      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -75,15 +74,14 @@ const Login = () => {
                     placeholder="Enter your password"
                   />
                 </div>
+                {/* Error Message - positioned right after password */}
+                {error && (
+                  <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600">{error}</p>
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{error}</p>
-              </div>
-            )}
 
             <div className="flex items-center justify-between">
               <label className="flex items-center text-sm text-[#6B5B5B] cursor-pointer">

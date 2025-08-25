@@ -18,7 +18,7 @@ interface OrderCardProps {
   isDragging?: boolean;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({ order, statusColor, isDragging = false }) => {
+export const OrderCard: React.FC<OrderCardProps> = ({ order, isDragging = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = () => {

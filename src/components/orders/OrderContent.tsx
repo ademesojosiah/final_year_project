@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { ProgressBar } from './ProgressBar';
 import statusColors from '../dashboard/statusColors';
 import type { SheetType } from '../../types/orders';
+import Barcode from 'react-barcode';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -20,6 +21,10 @@ interface OrderContentProps {
   estimatedDate: string;
   status: OrderStatus;
   sheetType?: SheetType;
+  customerName?: string;
+  productName?: string;
+  quantity?: number;
+  dateIssued?: string;
 }
 
 const getStatusColor = (status: OrderStatus) => {
@@ -37,6 +42,10 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   estimatedDate: initialEstimatedDate,
   status: initialStatus,
   sheetType,
+  customerName = 'Customer',
+  productName = 'Product',
+  quantity = 0,
+  dateIssued,
 }) => {
   // State for real-time updates
   const [currentStatus, setCurrentStatus] = useState<OrderStatus>(initialStatus);
@@ -44,6 +53,7 @@ export const OrderContent: React.FC<OrderContentProps> = ({
   const [updateMessage, setUpdateMessage] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   // Setup Socket.IO connection and listen for order updates
   useEffect(() => {
@@ -192,13 +202,104 @@ export const OrderContent: React.FC<OrderContentProps> = ({
 
       {/* Action Buttons */}
       <div className="flex gap-4">
-        <button className="border border-gray-200 px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-50">
+        <button 
+          onClick={() => setShowPrintModal(true)}
+          className="border border-gray-200 px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-50"
+        >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19.5 3.5L18 2L16.5 3.5L15 2L13.5 3.5L12 2L10.5 3.5L9 2L7.5 3.5L6 2V22L7.5 20.5L9 22L10.5 20.5L12 22L13.5 20.5L15 22L16.5 20.5L18 22L19.5 20.5L21 22V2L19.5 3.5ZM19 19.09H5V4.91H19V19.09ZM7 15H17V17H7V15ZM7 11H17V13H7V11ZM7 7H17V9H7V7Z" fill="currentColor"/>
           </svg>
           View my receipt
         </button>
       </div>
+
+      {/* Print Modal */}
+      {showPrintModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            {/* Close button */}
+            <button
+              onClick={() => setShowPrintModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            {/* Receipt Content */}
+            <div className="p-6">
+              {/* Header */}
+              <div className="text-center mb-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-2">Order Receipt</h2>
+                <div className="h-1 w-16 bg-primary mx-auto rounded"></div>
+              </div>
+
+              {/* Order Details */}
+              <div className="space-y-3 mb-4">
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Customer Name:</span>
+                  <span className="text-gray-800">{customerName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Order Code:</span>
+                  <span className="text-gray-800 font-mono">{orderId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Product Name:</span>
+                  <span className="text-gray-800">{productName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Sheet Type:</span>
+                  <span className="text-gray-800">{sheetType || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Quantity:</span>
+                  <span className="text-gray-800">{quantity.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Delivery Date:</span>
+                  <span className="text-gray-800">{new Date(currentEstimatedDate).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium text-gray-600">Date Issued:</span>
+                  <span className="text-gray-800">
+                    {dateIssued ? new Date(dateIssued).toLocaleDateString() : new Date().toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Barcode */}
+              <div className="text-center mb-4">
+                <div className="bg-white border-2 border-gray-300 rounded-lg p-3 inline-block">
+                  <Barcode 
+                    value={orderId}
+                    width={1.5}
+                    height={50}
+                    fontSize={10}
+                    background="#ffffff"
+                    lineColor="#000000"
+                    displayValue={true}
+                  />
+                </div>
+              </div>
+
+              {/* Print Button */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    window.print();
+                    setShowPrintModal(false);
+                  }}
+                  className="bg-primary hover:bg-primary/80 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+                >
+                  Print Receipt
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

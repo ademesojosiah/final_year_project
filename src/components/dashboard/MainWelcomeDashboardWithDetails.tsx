@@ -88,20 +88,29 @@ export const MainWelcomeDashboardWithDetails: React.FC<MainWelcomeDashboardWithD
 
     if (currentStatus === targetStatus) return;
 
+    // Update local state immediately for instant UI feedback
+    if (onOrderUpdate) {
+      onOrderUpdate(draggedOrder.orderId, targetStatus);
+    }
+
+    console.log(`✅ Order ${draggedOrder.orderId} moved from ${currentStatus} to ${targetStatus}`);
+
+    // Update API in background - don't block the UI
     try {
-      // Update order status via API
       await OrdersAPI.updateOrder(draggedOrder.orderId, {
         status: targetStatus
       });
+      console.log(`✅ Order ${draggedOrder.orderId} successfully updated in database`);
+    } catch (error) {
+      console.error('❌ Failed to update order status in database:', error);
       
-      // Call the update callback if provided
+      // Revert the local change if API call fails
       if (onOrderUpdate) {
-        onOrderUpdate(draggedOrder.orderId, targetStatus);
+        onOrderUpdate(draggedOrder.orderId, currentStatus);
       }
       
-      console.log(`✅ Order ${draggedOrder.orderId} moved from ${currentStatus} to ${targetStatus}`);
-    } catch (error) {
-      console.error('❌ Failed to update order status:', error);
+      // Show user feedback about the error
+      alert('Failed to update order status. Changes have been reverted.');
     }
   };
   // Group orders by status
