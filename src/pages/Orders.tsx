@@ -273,7 +273,7 @@ const Orders = () => {
     try {
       // Create the new order via API
       const newOrder = await OrdersAPI.createOrder({
-        customerName: orderData.customerName || 'Unknown Customer',
+        customerName: user?.name || 'Unknown Customer',
         productName: orderData.productName,
         quantity: orderData.quantity,
         sheetType: orderData.sheetType,
