@@ -4,6 +4,7 @@ import { ProgressBar } from './ProgressBar';
 import statusColors from '../dashboard/statusColors';
 import type { SheetType } from '../../types/orders';
 import Barcode from 'react-barcode';
+import { formatDateForDisplay } from '../../utils/dateUtils';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -259,12 +260,12 @@ export const OrderContent: React.FC<OrderContentProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Delivery Date:</span>
-                  <span className="text-gray-800">{new Date(currentEstimatedDate).toLocaleDateString()}</span>
+                  <span className="text-gray-800">{formatDateForDisplay(currentEstimatedDate)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Date Issued:</span>
                   <span className="text-gray-800">
-                    {dateIssued ? new Date(dateIssued).toLocaleDateString() : new Date().toLocaleDateString()}
+                    {dateIssued ? formatDateForDisplay(dateIssued) : new Date().toLocaleDateString()}
                   </span>
                 </div>
               </div>

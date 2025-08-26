@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { EmptyState } from '../components/ui';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { sortOrdersByDateIssued } from '../utils/dateUtils';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -33,8 +34,11 @@ const OrdersComp = ({ searchQuery, orders, loading, error }: OrdersCompProps) =>
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   
+  // Sort orders by dateIssued (newest first) before filtering
+  const sortedOrders = sortOrdersByDateIssued(orders);
+  
   // Filter orders based on search
-  let filteredOrders = orders;
+  let filteredOrders = sortedOrders;
   
   if (searchQuery) {
     filteredOrders = filteredOrders.filter((order: Order) => 
@@ -223,8 +227,8 @@ const Orders = () => {
     setLastUpdate(`Order ${updateEvent.orderId} updated to ${updateEvent.status}`);
     
     // Update the specific order in the orders list
-    setOrders(prevOrders => 
-      prevOrders.map(order => 
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.map(order => 
         order.orderId === updateEvent.orderId 
           ? { 
               ...order, 
@@ -233,8 +237,11 @@ const Orders = () => {
               ...(updateEvent.estimatedDate && { estimatedDate: updateEvent.estimatedDate })
             }
           : order
-      )
-    );
+      );
+      
+      // Re-sort the orders after update to maintain order
+      return sortOrdersByDateIssued(updatedOrders);
+    });
 
     // Clear the update message after 5 seconds
     setTimeout(() => setLastUpdate(''), 5000);
@@ -244,7 +251,9 @@ const Orders = () => {
     try {
       setLoading(true);
       const fetchedOrders = await OrdersAPI.getAllOrders();
-      setOrders(fetchedOrders);
+      // Sort orders by dateIssued (newest first)
+      const sortedOrders = sortOrdersByDateIssued(fetchedOrders);
+      setOrders(sortedOrders);
       setError(null);
     } catch (err) {
       setError('Failed to fetch orders. Please try again.');

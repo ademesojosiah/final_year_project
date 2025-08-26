@@ -5,6 +5,7 @@ import { OrdersAPI } from '../services/ordersAPI';
 import type { Order } from '../types/orders';
 import { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { sortOrdersByDateIssued } from '../utils/dateUtils';
 
 type OrderStatus = 'In Production' | 'In Printing' | 'In Binding' | 'Packaging' | 'Delivery';
 
@@ -46,7 +47,9 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
     try {
       setLoading(true);
       const fetchedOrders = await OrdersAPI.getAllOrders();
-      setOrders(fetchedOrders);
+      // Sort orders by dateIssued (newest first)
+      const sortedOrders = sortOrdersByDateIssued(fetchedOrders);
+      setOrders(sortedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
     } finally {
@@ -95,7 +98,11 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
         dateIssued: orderEvent.dateIssued
       };
       
-      setOrders(prevOrders => [newOrder, ...prevOrders]);
+      setOrders(prevOrders => {
+        const newOrders = [newOrder, ...prevOrders];
+        // Re-sort to maintain dateIssued order
+        return sortOrdersByDateIssued(newOrders);
+      });
     });
 
     // Listen for order updates
@@ -103,8 +110,8 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
       console.log('📦 Order update received on manager dashboard:', updateEvent);
       
       // Update the specific order in the orders list
-      setOrders(prevOrders => 
-        prevOrders.map(order => 
+      setOrders(prevOrders => {
+        const updatedOrders = prevOrders.map(order => 
           order.orderId === updateEvent.orderId 
             ? { 
                 ...order, 
@@ -112,8 +119,11 @@ export const DashboardWithDetails: React.FC<DashboardWithDetailsProps> = ({
                 ...(updateEvent.estimatedDate && { deliverySchedule: updateEvent.estimatedDate })
               }
             : order
-        )
-      );
+        );
+        
+        // Re-sort after update to maintain dateIssued order
+        return sortOrdersByDateIssued(updatedOrders);
+      });
     });
 
     // Cleanup on component unmount

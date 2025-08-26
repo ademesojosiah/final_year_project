@@ -4,6 +4,7 @@ import { OrderRow } from '../orders/OrderRow';
 import { Pagination } from '../ui/Pagination';
 import { OrdersAPI } from '../../services/ordersAPI';
 import Barcode from 'react-barcode';
+import { formatDateForDisplay } from '../../utils/dateUtils';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -221,12 +222,12 @@ export const ProductLogView: React.FC<ProductLogViewProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Delivery Date:</span>
-                  <span className="text-gray-800">{new Date(selectedOrder.deliverySchedule).toLocaleDateString()}</span>
+                  <span className="text-gray-800">{formatDateForDisplay(selectedOrder.deliverySchedule)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium text-gray-600">Date Issued:</span>
                   <span className="text-gray-800">
-                    {selectedOrder.dateIssued ? new Date(selectedOrder.dateIssued).toLocaleDateString() : new Date().toLocaleDateString()}
+                    {selectedOrder.dateIssued ? formatDateForDisplay(selectedOrder.dateIssued) : new Date().toLocaleDateString()}
                   </span>
                 </div>
               </div>
