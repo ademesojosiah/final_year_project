@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { EmptyState } from '../components/ui';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
-import { sortOrdersByDateIssued } from '../utils/dateUtils';
+import { sortOrdersByDateIssued, getCurrentDateString, calculateDeliverySchedule } from '../utils/dateUtils';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -280,13 +280,17 @@ const Orders = () => {
     console.log('Order submitted:', orderData);
     
     try {
+      // Calculate current date and delivery schedule (one week later)
+      const currentDate = getCurrentDateString();
+      const deliveryDate = calculateDeliverySchedule(currentDate);
+      
       // Create the new order via API
       const newOrder = await OrdersAPI.createOrder({
         customerName: user?.name || 'Unknown Customer',
         productName: orderData.productName,
         quantity: orderData.quantity,
         sheetType: orderData.sheetType,
-        deliverySchedule: orderData.deliverySchedule || new Date().toISOString().split('T')[0],
+        deliverySchedule: deliveryDate,
         status: 'In Production'
       });
       
